@@ -119,7 +119,7 @@ namespace ModernWpf.Controls
 
             if (Direction == Orientation.Vertical)
             {
-                double newOffset = LastVerticalLocation - (WheelChange * 1);
+                double newOffset = LastVerticalLocation - (WheelChange * (ExtentHeight / 6) / ActualHeight));
 
                 if (newOffset < 0)
                 {
