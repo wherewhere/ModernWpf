@@ -53,7 +53,11 @@
     <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
-    <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol</FontFamily>
+    <FontFamily x:Key="SymbolThemeFontFamily">
+        pack://application:,,,/ModernWpf;component/Fonts/#Segoe Fluent Icons,
+        pack://application:,,,/ModernWpf;component/Fonts/#Segoe MDL2 Assets,
+        Segoe UI Symbol
+    </FontFamily>
     <FontFamily x:Key="PhoneFontFamilySemiLight">Segoe WP SemiLight</FontFamily>
     <FontFamily x:Key="PhoneFontFamilyNormal">Segoe WP</FontFamily>
     <sys:Double x:Key="ContentControlFontSize">14</sys:Double>
