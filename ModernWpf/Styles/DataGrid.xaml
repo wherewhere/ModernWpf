@@ -760,7 +760,8 @@
                         <local:ScrollViewerEx
                             x:Name="DG_ScrollViewer"
                             primitives:ScrollViewerHelper.AutoHideScrollBars="False"
-                            Focusable="false">
+                            Focusable="false"
+                            RewriteWheelChange="True">
                             <local:ScrollViewerEx.Template>
                                 <ControlTemplate TargetType="ScrollViewer">
                                     <Grid>

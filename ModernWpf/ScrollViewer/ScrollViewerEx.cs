@@ -64,6 +64,23 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region RewriteWheelChange
+
+        public static readonly DependencyProperty RewriteWheelChangeProperty =
+            DependencyProperty.Register(
+                nameof(RewriteWheelChange),
+                typeof(bool),
+                typeof(ScrollViewerEx),
+                new PropertyMetadata(false));
+
+        public bool RewriteWheelChange
+        {
+            get => (bool)GetValue(RewriteWheelChangeProperty);
+            set => SetValue(RewriteWheelChangeProperty, value);
+        }
+
+        #endregion
+
         #region ForceUseSmoothScroll
 
         public static readonly DependencyProperty ForceUseSmoothScrollProperty =
@@ -112,14 +129,13 @@ namespace ModernWpf.Controls
         /// <inheritdoc/>
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
-            ScrollViewerBehavior.SetIsAnimating(this, true);
-
-            double WheelChange = e.Delta;
             Orientation Direction = GetDirection();
+            ScrollViewerBehavior.SetIsAnimating(this, true);
 
             if (Direction == Orientation.Vertical)
             {
-                double newOffset = LastVerticalLocation - (WheelChange * 1);
+                double WheelChange = RewriteWheelChange ? e.Delta * (ViewportHeight / 1.5) / ActualHeight : e.Delta;
+                double newOffset = LastVerticalLocation - WheelChange;
 
                 if (newOffset < 0)
                 {
@@ -139,14 +155,15 @@ namespace ModernWpf.Controls
 
                 ScrollToVerticalOffset(LastVerticalLocation);
 
-                double scale = Math.Abs((LastVerticalLocation - newOffset) / (WheelChange * 1));
+                double scale = Math.Abs((LastVerticalLocation - newOffset) / WheelChange);
 
                 AnimateScroll(newOffset, Direction, scale);
                 LastVerticalLocation = newOffset;
             }
             else
             {
-                double newOffset = LastHorizontalLocation - (WheelChange * 1);
+                double WheelChange = RewriteWheelChange ? e.Delta * (ViewportWidth / 1.5) / ActualWidth : e.Delta;
+                double newOffset = LastHorizontalLocation - WheelChange;
 
                 if (newOffset < 0)
                 {
@@ -166,7 +183,7 @@ namespace ModernWpf.Controls
 
                 ScrollToHorizontalOffset(LastHorizontalLocation);
 
-                double scale = Math.Abs((LastHorizontalLocation - newOffset) / (WheelChange * 1));
+                double scale = Math.Abs((LastHorizontalLocation - newOffset) / WheelChange);
 
                 AnimateScroll(newOffset, Direction, scale);
                 LastHorizontalLocation = newOffset;

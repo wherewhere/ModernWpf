@@ -389,7 +389,7 @@ namespace ModernWpf.Controls.Primitives
                 }
                 else
                 {
-                    control.Loaded += (sender, e) => VisualStateManager.GoToElementState(control, State, true);
+                    control.Loaded += (sender, e) => VisualStateManager.GoToElementState(control, State, false);
                 }
             }
         }
