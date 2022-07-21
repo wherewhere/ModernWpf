@@ -52,7 +52,8 @@
                 Header="UseAcrylicBackdrop"
                 IsOn="True"
                 Toggled="UseAcrylicBackdrop_Toggled" />
-            <Button Click="Button_Click" Content="Test" />
+            <Button Click="Button_Click" Content="Theme" />
+            <ToggleButton Click="ToggleButton_Click" Content="FullScreen" />
         </ui:SimpleStackPanel>
 
         <Slider

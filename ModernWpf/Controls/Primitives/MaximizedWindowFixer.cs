@@ -169,7 +169,7 @@ namespace ModernWpf.Controls.Primitives
         private void OnWindowPosChanging(IntPtr lParam)
         {
             var pos = (WINDOWPOS)Marshal.PtrToStructure(lParam, typeof(WINDOWPOS));
-            if ((pos.flags & (int)SWP.NOSIZE) == 0)
+            if ((pos.flags & SWP.NOSIZE) == 0)
             {
                 bool windowPosAdjusted = false;
 

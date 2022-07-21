@@ -252,6 +252,14 @@ namespace MS.Win32
 #pragma warning restore CS1591
         }
 
+        public enum GWL
+        {
+            /// <summary>
+            /// Retrieves the window styles
+            /// </summary>
+            STYLE = -16,
+        }
+
         /// <summary>
         /// DWM window accent policy.
         /// </summary>
@@ -310,6 +318,24 @@ namespace MS.Win32
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern bool SetForegroundWindow(HandleRef hWnd);
 
+        [DllImport("user32.dll", ExactSpelling = true)]
+        public static extern bool IsIconic(IntPtr hwnd);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        public static extern bool ShowWindow(IntPtr hWnd, SW nCmdShow);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+
+        public static IntPtr GetWindowLongPtr(IntPtr hWnd, GWL nIndex) =>
+            GetWindowLongPtr(hWnd, (int)nIndex);
+
+        public static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
+        {
+            return IntPtr.Size > 4 ? GetWindowLongPtr_x64(hWnd, nIndex)
+                : new IntPtr(GetWindowLong(hWnd, nIndex));
+        }
+
         /// <summary>
         /// Retrieves the specified system metric or system configuration setting.
         /// Note that all dimensions retrieved by GetSystemMetrics are in pixels.
@@ -317,12 +343,27 @@ namespace MS.Win32
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetSystemMetrics(int nIndex);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowLongPtr")]
+        public static extern IntPtr GetWindowLongPtr_x64(IntPtr hWnd, int nIndex);
+
         /// <summary>
         /// Retrieves information about the specified window.
         /// The function also retrieves the 32-bit (DWORD) value at the specified offset into the extra window memory.
         /// </summary>
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, GWL nIndex, IntPtr dwNewLong) =>
+            SetWindowLongPtr(hWnd, (int)nIndex, dwNewLong);
+
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            return IntPtr.Size > 4 ? SetWindowLongPtr_x64(hWnd, nIndex, dwNewLong)
+                : new IntPtr(SetWindowLong(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowLongPtr")]
+        public static extern IntPtr SetWindowLongPtr_x64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         /// <summary>
         /// Changes an attribute of the specified window.

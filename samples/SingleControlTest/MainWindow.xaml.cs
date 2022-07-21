@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -41,6 +42,20 @@ namespace SingleControlTest
         private void UseAcrylicBackdrop_Toggled(object sender, RoutedEventArgs e)
         {
             WindowHelper.SetUseAcrylicBackdrop(this, UseAcrylicBackdrop.IsOn);
+        }
+
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = (ToggleButton)sender;
+
+            if (toggleButton.IsChecked is true)
+            {
+                FullScreenHelper.StartFullScreen(this);
+            }
+            else
+            {
+                FullScreenHelper.EndFullScreen(this);
+            }
         }
     }
 }

@@ -20,6 +20,11 @@ namespace MS.Win32
         public enum DWMWINDOWATTRIBUTE : uint
         {
             /// <summary>
+            /// Enables or forcibly disables DWM transitions. The pvAttribute parameter points to a value of type BOOL. TRUE to disable transitions, or FALSE to enable transitions.
+            /// </summary>
+            DWMWA_TRANSITIONS_FORCEDISABLED = 3,
+
+            /// <summary>
             /// Enables content rendered in the non-client area to be visible on the frame drawn by DWM.
             /// </summary>
             DWMWA_ALLOW_NCPAINT = 4,

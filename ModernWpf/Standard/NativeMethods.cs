@@ -67,6 +67,38 @@ namespace Standard
         FORCEMINIMIZE = 11,
     }
 
+    [Flags]
+    public enum WS
+    {
+        /// <summary>
+        /// The window is initially maximized.
+        /// </summary>
+        MAXIMIZE = 0x01000000,
+
+        /// <summary>
+        /// The window has a maximize button. Cannot be combined with the WS_EX_CONTEXTHELP style. The WS_SYSMENU style must also be specified.
+        /// </summary>
+        MAXIMIZEBOX = 0x00010000,
+
+        /// <summary>
+        /// The window is initially minimized. Same as the WS_ICONIC style.
+        /// </summary>
+        MINIMIZE = 0x20000000,
+
+        /// <summary>
+        /// The window has a sizing border. Same as the WS_SIZEBOX style.
+        /// </summary>
+        THICKFRAME = 0x00040000,
+    }
+
+    public enum MONITOR
+    {
+        /// <summary>
+        /// Returns a handle to the primary display monitor.
+        /// </summary>
+        DEFAULTTOPRIMARY = 1,
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     internal class MONITORINFO
     {
@@ -212,7 +244,7 @@ namespace Standard
         public int y;
         public int cx;
         public int cy;
-        public int flags;
+        public SWP flags;
     }
 
     // Some native methods are shimmed through public versions that handle converting failures into thrown exceptions.
