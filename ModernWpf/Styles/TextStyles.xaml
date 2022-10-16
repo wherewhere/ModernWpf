@@ -30,7 +30,7 @@
         x:Key="TitleTextBlockStyle"
         BasedOn="{StaticResource BaseTextBlockStyle}"
         TargetType="TextBlock">
-        <Setter Property="FontWeight" Value="350" />
+        <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="FontSize" Value="24" />
     </Style>
 
