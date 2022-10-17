@@ -41,7 +41,9 @@ namespace SingleControlTest
 
         private void UseAcrylicBackdrop_Toggled(object sender, RoutedEventArgs e)
         {
+            WindowHelper.SetUseAeroBackdrop(this, UseAcrylicBackdrop.IsOn);
             WindowHelper.SetUseAcrylicBackdrop(this, UseAcrylicBackdrop.IsOn);
+            WindowHelper.SetSystemBackdropType(this, UseAcrylicBackdrop.IsOn ? BackdropType.Mica : BackdropType.None);
         }
 
         private void ToggleButton_Click(object sender, RoutedEventArgs e)

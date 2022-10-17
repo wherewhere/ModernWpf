@@ -498,6 +498,14 @@
     <sys:Double x:Key="TeachingTipBorderThickness">1</sys:Double>
     <Thickness x:Key="TeachingTipTopHighlightOffsetForBorder">0,1,0,0</Thickness>
 
+    <!--  Resources for TextBlock  -->
+    <sys:Double x:Key="CaptionTextBlockFontSize">12</sys:Double>
+    <sys:Double x:Key="BodyTextBlockFontSize">14</sys:Double>
+    <sys:Double x:Key="SubtitleTextBlockFontSize">20</sys:Double>
+    <sys:Double x:Key="TitleTextBlockFontSize">28</sys:Double>
+    <sys:Double x:Key="TitleLargeTextBlockFontSize">40</sys:Double>
+    <sys:Double x:Key="DisplayTextBlockFontSize">68</sys:Double>
+
     <!--  Resources for TextBox  -->
     <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,8</Thickness>
     <Thickness x:Key="TextBoxInnerButtonMargin">0,4,4,4</Thickness>

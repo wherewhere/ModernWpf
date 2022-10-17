@@ -26,73 +26,75 @@
             <ui:DoubleProportionConverter x:Key="DoubleProportionConverter" />
         </ResourceDictionary>
     </Window.Resources>
-    <StackPanel
-        Margin="4"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
-        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
-            <ui:ToggleSwitch
-                x:Name="IsEnable"
-                MinWidth="0"
-                Header="IsEnable"
-                IsOn="True" />
-            <ui:ToggleSwitch
-                x:Name="IsActive"
-                MinWidth="0"
-                Header="IsActive"
-                IsOn="True" />
-            <ui:ToggleSwitch
-                x:Name="IsIndeterminate"
-                MinWidth="0"
-                Header="IsIndeterminate"
-                IsOn="True" />
-            <ui:ToggleSwitch
-                x:Name="UseAcrylicBackdrop"
-                MinWidth="0"
-                Header="UseAcrylicBackdrop"
-                IsOn="True"
-                Toggled="UseAcrylicBackdrop_Toggled" />
-            <Button Click="Button_Click" Content="Theme" />
-            <ToggleButton Click="ToggleButton_Click" Content="FullScreen" />
-        </ui:SimpleStackPanel>
-
-        <Slider
-            x:Name="Value"
-            Maximum="100"
-            Minimum="-1" />
-
-        <ui:ProgressRing
-            IsActive="{Binding IsOn, ElementName=IsActive}"
-            IsEnabled="{Binding IsOn, ElementName=IsEnable}"
-            IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
-            Value="{Binding Value, ElementName=Value, Mode=TwoWay}" />
-
-        <ui:InfoBar
-            Title="Title"
+    <ui:ScrollViewerEx>
+        <ui:SimpleStackPanel
+            Margin="16"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            IsOpen="True"
-            Message="Essential app message for your users to be informed of, acknowledge, or take action on." />
+            VerticalAlignment="Stretch"
+            Spacing="8">
+            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+                <ui:ToggleSwitch
+                    x:Name="IsEnable"
+                    MinWidth="0"
+                    Header="IsEnable"
+                    IsOn="True" />
+                <ui:ToggleSwitch
+                    x:Name="IsActive"
+                    MinWidth="0"
+                    Header="IsActive"
+                    IsOn="True" />
+                <ui:ToggleSwitch
+                    x:Name="IsIndeterminate"
+                    MinWidth="0"
+                    Header="IsIndeterminate"
+                    IsOn="True" />
+                <ui:ToggleSwitch
+                    x:Name="UseAcrylicBackdrop"
+                    MinWidth="0"
+                    Header="UseAcrylicBackdrop"
+                    IsOn="True"
+                    Toggled="UseAcrylicBackdrop_Toggled" />
+                <Button Click="Button_Click" Content="Theme" />
+                <ToggleButton Click="ToggleButton_Click" Content="FullScreen" />
+            </ui:SimpleStackPanel>
 
-        <ui:TeachingTip
-            x:Name="ToggleThemeTeachingTip1"
-            Title="Title"
-            ActionButtonContent="Toggle theme now"
-            CloseButtonContent="Got it!"
-            IsLightDismissEnabled="True"
-            Subtitle="It's easier than ever to see control samples in both light and dark theme!"
-            Target="{Binding ElementName=IsEnable}" />
+            <Slider
+                x:Name="Value"
+                Maximum="100"
+                Minimum="-1" />
 
-        <ui:PipsPager
-            NextButtonVisibility="Visible"
-            NumberOfPages="13"
-            PreviousButtonVisibility="Visible" />
+            <ui:ProgressRing
+                IsActive="{Binding IsOn, ElementName=IsActive}"
+                IsEnabled="{Binding IsOn, ElementName=IsEnable}"
+                IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
+                Value="{Binding Value, ElementName=Value, Mode=TwoWay}" />
 
-        <ui:TimePicker />
+            <ui:InfoBar
+                Title="Title"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                IsOpen="True"
+                Message="Essential app message for your users to be informed of, acknowledge, or take action on." />
 
-        <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
+            <ui:TeachingTip
+                x:Name="ToggleThemeTeachingTip1"
+                Title="Title"
+                ActionButtonContent="Toggle theme now"
+                CloseButtonContent="Got it!"
+                IsLightDismissEnabled="True"
+                Subtitle="It's easier than ever to see control samples in both light and dark theme!"
+                Target="{Binding ElementName=IsEnable}" />
 
-        <!--<ListView
+            <ui:PipsPager
+                NextButtonVisibility="Visible"
+                NumberOfPages="13"
+                PreviousButtonVisibility="Visible" />
+
+            <ui:TimePicker />
+
+            <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
+
+            <!--<ListView
             x:Name="ListView"
             IsEnabled="{Binding IsOn, ElementName=IsEnable}"
             SelectionMode="Multiple">
@@ -103,5 +105,17 @@
             <sys:String>Test</sys:String>
         </ListView>-->
 
-    </StackPanel>
+            <TextBlock Style="{DynamicResource BaseTextBlockStyle}" Text="BaseTextBlockStyle" />
+            <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text="CaptionTextBlockStyle" />
+            <TextBlock Style="{DynamicResource BodyTextBlockStyle}" Text="BodyTextBlockStyle" />
+            <TextBlock Style="{DynamicResource BodyStrongTextBlockStyle}" Text="BodyStrongTextBlockStyle" />
+            <TextBlock Style="{DynamicResource SubtitleTextBlockStyle}" Text="SubtitleTextBlockStyle" />
+            <TextBlock Style="{DynamicResource TitleTextBlockStyle}" Text="TitleTextBlockStyle" />
+            <TextBlock Style="{DynamicResource TitleLargeTextBlockStyle}" Text="TitleLargeTextBlockStyle" />
+            <TextBlock Style="{DynamicResource DisplayTextBlockStyle}" Text="DisplayTextBlockStyle" />
+            <TextBlock Style="{DynamicResource HeaderTextBlockStyle}" Text="HeaderTextBlockStyle" />
+            <TextBlock Style="{DynamicResource SubheaderTextBlockStyle}" Text="SubheaderTextBlockStyle" />
+
+        </ui:SimpleStackPanel>
+    </ui:ScrollViewerEx>
 </Window>
