@@ -39,7 +39,7 @@ namespace ModernWpf.Controls
         public const string GroupCommon = "CommonStates";
         #endregion GroupCommon
 
-        public static FrameworkElement GetImplementationRoot(DependencyObject? dependencyObject)
+        public static FrameworkElement GetImplementationRoot(DependencyObject dependencyObject)
         {
             if (dependencyObject is null)
             {

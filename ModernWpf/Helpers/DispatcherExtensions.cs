@@ -194,7 +194,7 @@ namespace System.Windows.Threading
 
             static Task TryEnqueueAsync(Dispatcher dispatcher, Action function, DispatcherPriority priority)
             {
-                var taskCompletionSource = new TaskCompletionSource<object?>();
+                var taskCompletionSource = new TaskCompletionSource<object>();
 
                 _ = dispatcher.InvokeAsync(() =>
                 {
@@ -307,7 +307,7 @@ namespace System.Windows.Threading
 
             static Task TryEnqueueAsync(Dispatcher dispatcher, Func<Task> function, DispatcherPriority priority)
             {
-                var taskCompletionSource = new TaskCompletionSource<object?>();
+                var taskCompletionSource = new TaskCompletionSource<object>();
 
                 _ = dispatcher.InvokeAsync(async () =>
                 {

@@ -1228,7 +1228,7 @@ namespace ModernWpf.Controls
         /// <param name="prevButton">Previous button.</param>
         /// <param name="nextButton">Next button.</param>
         /// <param name="inactiveButtons">Inactive buttons.</param>
-        private void GetNavigationButtons(out Button? prevButton, out Button? nextButton, out IEnumerable<Button?> inactiveButtons)
+        private void GetNavigationButtons(out Button prevButton, out Button nextButton, out IEnumerable<Button> inactiveButtons)
         {
             if (Orientation == Orientation.Horizontal)
             {
