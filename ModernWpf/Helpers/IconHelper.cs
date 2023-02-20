@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using Windows.Win32;
+using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace ModernWpf
 {
@@ -16,12 +18,12 @@ namespace ModernWpf
             string iconModuleFile = GetModuleFileName(new HandleRef());
 
             // We don't really care about the return value.  Handles will be invalid on error.
-            _ = NativeMethods.ExtractIconEx(iconModuleFile, 0, largeIconHandle, smallIconHandle, 1);
+            _ = ExtractIconEx(iconModuleFile, 0, largeIconHandle, smallIconHandle, 1);
         }
 
         public static bool DestroyIcon(IntPtr icon)
         {
-            bool result = NativeMethods.DestroyIcon(icon);
+            bool result = PInvoke.DestroyIcon(new HICON(icon));
             int error = Marshal.GetLastWin32Error();
 
             if (!result)
@@ -49,7 +51,7 @@ namespace ModernWpf
             StringBuilder buffer = new StringBuilder(MAX_PATH);
             while (true)
             {
-                int size = NativeMethods.GetModuleFileName(hModule, buffer, buffer.Capacity);
+                int size = GetModuleFileName(hModule, buffer, buffer.Capacity);
                 if (size == 0)
                 {
                     throw new Win32Exception();
@@ -68,16 +70,10 @@ namespace ModernWpf
             }
         }
 
-        private static class NativeMethods
-        {
-            [DllImport("Shell32.dll", CharSet = CharSet.Auto)]
-            public extern static int ExtractIconEx(string lpszFile, int nIconIndex, IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
+        [DllImport("Shell32.dll", CharSet = CharSet.Auto)]
+        private extern static int ExtractIconEx(string lpszFile, int nIconIndex, IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            public extern static bool DestroyIcon(IntPtr hIcon);
-
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-            public static extern int GetModuleFileName(HandleRef hModule, StringBuilder buffer, int length);
-        }
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern int GetModuleFileName(HandleRef hModule, StringBuilder buffer, int length);
     }
 }

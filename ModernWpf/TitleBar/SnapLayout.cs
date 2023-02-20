@@ -1,5 +1,4 @@
-﻿using MS.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +9,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Windows.Win32;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -64,11 +64,11 @@ namespace ModernWpf.Controls.Primitives
         {
             // TODO: This whole class is one big todo
 
-            User32.WM mouseNotification = (User32.WM)uMsg;
+            uint mouseNotification = (uint)uMsg;
 
             switch (mouseNotification)
             {
-                case User32.WM.NCLBUTTONDOWN:
+                case PInvoke.WM_NCLBUTTONDOWN:
                     if (IsOverButton(wParam, lParam))
                     {
                         _isButtonClicked = true;
@@ -76,11 +76,11 @@ namespace ModernWpf.Controls.Primitives
                     }
                     break;
 
-                case User32.WM.NCMOUSELEAVE:
+                case PInvoke.WM_NCMOUSELEAVE:
                     DefocusButton();
                     break;
 
-                case User32.WM.NCLBUTTONUP:
+                case PInvoke.WM_NCLBUTTONUP:
                     if (_isButtonClicked)
                     {
                         if (IsOverButton(wParam, lParam))
@@ -91,7 +91,7 @@ namespace ModernWpf.Controls.Primitives
                     }
                     break;
 
-                case User32.WM.NCHITTEST:
+                case PInvoke.WM_NCHITTEST:
                     if (IsOverButton(wParam, lParam))
                     {
                         FocusButton();
@@ -101,13 +101,13 @@ namespace ModernWpf.Controls.Primitives
                     {
                         DefocusButton();
                     }
-                    return new IntPtr((int)HT.MAXBUTTON);
+                    return new IntPtr(PInvoke.HTMAXBUTTON);
 
                 default:
                     handled = false;
                     break;
             }
-            return new IntPtr((int)HT.CLIENT);
+            return new IntPtr(PInvoke.HTCLIENT);
         }
 
         private void FocusButton()

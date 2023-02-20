@@ -3,17 +3,19 @@
 // See the LICENSE file in the project root for more information.
 
 using MS.Internal;
-using MS.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Windows.Win32;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -615,27 +617,27 @@ namespace ModernWpf.Controls.Primitives
 
             internal void SetPopupPos(bool position, int x, int y, bool size, int width, int height)
             {
-                int flags = NativeMethods.SWP_NOZORDER | NativeMethods.SWP_NOACTIVATE;
+                SET_WINDOW_POS_FLAGS flags = SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE;
                 if (!position)
                 {
-                    flags |= NativeMethods.SWP_NOMOVE;
+                    flags |= SET_WINDOW_POS_FLAGS.SWP_NOMOVE;
                 }
                 if (!size)
                 {
-                    flags |= NativeMethods.SWP_NOSIZE;
+                    flags |= SET_WINDOW_POS_FLAGS.SWP_NOSIZE;
                 }
 
-                UnsafeNativeMethods.SetWindowPos(new HandleRef(null, Handle), new HandleRef(null, IntPtr.Zero),
+                PInvoke.SetWindowPos(new HWND(Handle), new HWND(IntPtr.Zero),
                     x, y, width, height, flags);
             }
 
-            internal Rect GetWindowRect()
+            internal unsafe Rect GetWindowRect()
             {
-                NativeMethods.RECT rect = new NativeMethods.RECT(0, 0, 0, 0);
+                RECT rect = new RECT(0, 0, 0, 0);
 
                 if (IsWindowAlive())
                 {
-                    SafeNativeMethods.GetWindowRect(_window.CreateHandleRef(), ref rect);
+                    GetWindowRect(_window.CreateHandleRef(), ref rect);
                 }
 
                 return PointUtil.ToRect(rect);
@@ -675,6 +677,17 @@ namespace ModernWpf.Controls.Primitives
                 return Matrix.Identity;
             }
 
+            private static void GetWindowRect(HandleRef hWnd, [In, Out] ref RECT rect)
+            {
+                if (!_GetWindowRect(hWnd, ref rect))
+                {
+                    throw new Win32Exception();
+                }
+            }
+
+            [DllImport("user32.dll", EntryPoint = "GetWindowRect", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern bool _GetWindowRect(HandleRef hWnd, [In, Out] ref RECT rect);
+
             private static IntPtr GetHandle(HwndSource hwnd)
             {
                 // add hook to the popup's window
@@ -692,7 +705,7 @@ namespace ModernWpf.Controls.Primitives
             private HwndSource _window;
         }
 
-        #endregion
+#endregion
 
         #region Positioner
 

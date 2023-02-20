@@ -1,15 +1,11 @@
-﻿using MS.Win32;
-using Standard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.Graphics.Dwm;
+using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -24,10 +20,10 @@ namespace ModernWpf.Controls.Primitives
     public static class MicaHelper
     {
         /// <summary>
-        /// Checks if the current <see cref="Windows"/> supports selected <see cref="BackgroundType"/>.
+        /// Checks if the current <see cref="Window"/> supports selected <see cref="BackdropType"/>.
         /// </summary>
         /// <param name="type">Background type to check.</param>
-        /// <returns><see langword="true"/> if <see cref="BackgroundType"/> is supported.</returns>
+        /// <returns><see langword="true"/> if <see cref="BackdropType"/> is supported.</returns>
         public static bool IsSupported(this BackdropType type)
         {
             if (!OSVersionHelper.IsWindowsNT) { return false; }
@@ -100,21 +96,21 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to remove all effects if they have been applied to the <c>hWnd</c>.
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
-        public static void Remove(IntPtr handle)
+        public static unsafe void Remove(IntPtr handle)
         {
             if (handle == IntPtr.Zero) return;
 
-            int pvAttribute = (int)DWMAPI.PvAttribute.Disable;
-            int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_DISABLE;
+            void* pvAttribute = (void*)(int)PvAttribute.Disable;
+            void* backdropPvAttribute = (void*)(uint)DWMSBT.DWMSBT_DISABLE;
 
             RemoveDarkMode(handle);
 
-            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_MICA_EFFECT, ref pvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_MICA_EFFECT, pvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
 
-            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                ref backdropPvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_SYSTEMBACKDROP_TYPE,
+                backdropPvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
         }
 
         /// <summary>
@@ -134,21 +130,21 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to inform the operating system that this <c>hWnd</c> uses dark mode.
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
-        public static void ApplyDarkMode(IntPtr handle)
+        public static unsafe void ApplyDarkMode(IntPtr handle)
         {
             if (handle == IntPtr.Zero) return;
 
-            var pvAttribute = (int)DWMAPI.PvAttribute.Enable;
-            var dwAttribute = DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
+            void* pvAttribute = (void*)(int)PvAttribute.Enable;
+            var dwAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
 
             if (OSVersionHelper.OSVersion < new Version(10, 0, 18985))
             {
-                dwAttribute = DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_OLD;
+                dwAttribute = (DWMWINDOWATTRIBUTE)DWMWA_USE_IMMERSIVE_DARK_MODE_OLD;
             }
 
-            DWMAPI.DwmSetWindowAttribute(handle, dwAttribute,
-                ref pvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), dwAttribute,
+                pvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
         }
 
         /// <summary>
@@ -168,21 +164,21 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to clear the dark theme usage information.
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
-        public static void RemoveDarkMode(IntPtr handle)
+        public static unsafe void RemoveDarkMode(IntPtr handle)
         {
             if (handle == IntPtr.Zero) { return; }
 
-            var pvAttribute = (int)DWMAPI.PvAttribute.Disable;
-            var dwAttribute = DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
+            var pvAttribute = (void*)(int)PvAttribute.Disable;
+            var dwAttribute = DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE;
 
             if (OSVersionHelper.OSVersion < new Version(10, 0, 18985))
             {
-                dwAttribute = DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_OLD;
+                dwAttribute = (DWMWINDOWATTRIBUTE)DWMWA_USE_IMMERSIVE_DARK_MODE_OLD;
             }
 
-            DWMAPI.DwmSetWindowAttribute(handle, dwAttribute,
-                ref pvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), dwAttribute,
+                pvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
         }
 
         /// <summary>
@@ -209,7 +205,7 @@ namespace ModernWpf.Controls.Primitives
             // https://stackoverflow.com/questions/743906/how-to-hide-close-button-in-wpf-window
             try
             {
-                User32.SetWindowLong(handle, -16, User32.GetWindowLong(handle, -16) & ~0x80000);
+                PInvoke.SetWindowLong(new HWND(handle), WINDOW_LONG_PTR_INDEX.GWL_STYLE, PInvoke.GetWindowLong(new HWND(handle), WINDOW_LONG_PTR_INDEX.GWL_STYLE) & ~0x80000);
 
                 return true;
             }
@@ -222,15 +218,15 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static bool TryApplyNone(IntPtr handle)
+        private static unsafe bool TryApplyNone(IntPtr handle)
         {
             if (OSVersionHelper.OSVersion >= new Version(10, 0, 22523))
             {
-                int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_AUTO;
+                void* backdropPvAttribute = (void*)(uint)DWMSBT.DWMSBT_AUTO;
 
-                DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                    ref backdropPvAttribute,
-                    Marshal.SizeOf(typeof(int)));
+                PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_SYSTEMBACKDROP_TYPE,
+                    backdropPvAttribute,
+                    (uint)Marshal.SizeOf(typeof(int)));
 
                 return true;
             }
@@ -241,52 +237,112 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static bool TryApplyTabbed(IntPtr handle)
+        private static unsafe bool TryApplyTabbed(IntPtr handle)
         {
-            int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TABBEDWINDOW;
+            void* backdropPvAttribute = (void*)(uint)DWMSBT.DWMSBT_TABBEDWINDOW;
 
-            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                ref backdropPvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_SYSTEMBACKDROP_TYPE,
+                backdropPvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
 
             return true;
         }
 
-        private static bool TryApplyMica(IntPtr handle)
+        private static unsafe bool TryApplyMica(IntPtr handle)
         {
-            int backdropPvAttribute;
+            void* backdropPvAttribute;
 
             if (OSVersionHelper.OSVersion>= new Version(10,0,22523))
             {
-                backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_MAINWINDOW;
+                backdropPvAttribute = (void*)(uint)DWMSBT.DWMSBT_MAINWINDOW;
 
-                DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                    ref backdropPvAttribute,
-                    Marshal.SizeOf(typeof(int)));
+                PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_SYSTEMBACKDROP_TYPE,
+                    backdropPvAttribute,
+                    (uint)Marshal.SizeOf(typeof(int)));
 
                 return true;
             }
 
             if (!RemoveTitleBar(handle)) { return false; }
 
-            backdropPvAttribute = (int)DWMAPI.PvAttribute.Enable;
+            backdropPvAttribute = (void*)(int)PvAttribute.Enable;
 
-            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_MICA_EFFECT,
-                ref backdropPvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_MICA_EFFECT,
+                backdropPvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
 
             return true;
         }
 
-        private static bool TryApplyAcrylic(IntPtr handle)
+        private static unsafe bool TryApplyAcrylic(IntPtr handle)
         {
-            int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TRANSIENTWINDOW;
+            void* backdropPvAttribute = (void*)(uint)DWMSBT.DWMSBT_TRANSIENTWINDOW;
 
-            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                ref backdropPvAttribute,
-                Marshal.SizeOf(typeof(int)));
+            PInvoke.DwmSetWindowAttribute(new HWND(handle), (DWMWINDOWATTRIBUTE)DWMWA_SYSTEMBACKDROP_TYPE,
+                backdropPvAttribute,
+                (uint)Marshal.SizeOf(typeof(int)));
 
             return true;
+        }
+
+        /// <summary>
+        /// Allows a window to either use the accent color, or dark, according to the user Color Mode preferences.
+        /// </summary>
+        private const int DWMWA_USE_IMMERSIVE_DARK_MODE_OLD = 19;
+
+        /// <summary>
+        /// Allows to enter a value from 0 to 4 deciding on the imposed backdrop effect.
+        /// </summary>
+        private const int DWMWA_SYSTEMBACKDROP_TYPE = 38;
+
+        /// <summary>
+        /// Indicates whether the window should use the Mica effect.
+        /// <para>Windows 11 and above.</para>
+        /// </summary>
+        private const int DWMWA_MICA_EFFECT = 1029;
+
+        /// <summary>
+        /// Abstraction of pointer to an object containing the attribute value to set. The type of the value set depends on the value of the dwAttribute parameter.
+        /// The DWMWINDOWATTRIBUTE enumeration topic indicates, in the row for each flag, what type of value you should pass a pointer to in the pvAttribute parameter.
+        /// </summary>
+        private enum PvAttribute
+        {
+            /// <summary>
+            /// Object containing the <see langowrd="false"/> attribute value to set in dwmapi.h. 
+            /// </summary>
+            Disable = 0x00,
+            /// <summary>
+            /// Object containing the <see langowrd="true"/> attribute value to set in dwmapi.h. 
+            /// </summary>
+            Enable = 0x01
+        }
+
+        /// <summary>
+        /// Collection of backdrop types.
+        /// </summary>
+        [Flags]
+        private enum DWMSBT : uint
+        {
+            /// <summary>
+            /// Automatically selects backdrop effect.
+            /// </summary>
+            DWMSBT_AUTO = 0,
+            /// <summary>
+            /// Turns off the backdrop effect.
+            /// </summary>
+            DWMSBT_DISABLE = 1,
+            /// <summary>
+            /// Sets Mica effect with generated wallpaper tint.
+            /// </summary>
+            DWMSBT_MAINWINDOW = 2,
+            /// <summary>
+            /// Sets acrlic effect.
+            /// </summary>
+            DWMSBT_TRANSIENTWINDOW = 3,
+            /// <summary>
+            /// Sets blurred wallpaper effect, like Mica without tint.
+            /// </summary>
+            DWMSBT_TABBEDWINDOW = 4
         }
     }
 }

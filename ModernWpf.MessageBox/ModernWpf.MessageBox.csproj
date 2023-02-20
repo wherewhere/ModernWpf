@@ -7,7 +7,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>ModernWpfUI.MessageBox</PackageId>
     <Description>An alternative to System.Windows.MessageBox using ModernWpfUI windows.</Description>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

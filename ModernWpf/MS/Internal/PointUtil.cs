@@ -2,14 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using MS.Win32;
 using System.Windows;
+using Windows.Win32.Foundation;
 
 namespace MS.Internal
 {
     internal static class PointUtil
     {
-        internal static Rect ToRect(NativeMethods.RECT rc)
+        internal static Rect ToRect(this RECT rc)
         {
             Rect rect = new Rect();
  

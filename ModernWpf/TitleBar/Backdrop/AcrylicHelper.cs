@@ -1,5 +1,4 @@
 ﻿using ModernWpf.Controls.Primitives;
-using MS.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Windows.System;
+using Windows.Win32;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -101,9 +102,9 @@ namespace ModernWpf.Controls.Primitives
         {
             if (handle == IntPtr.Zero) return;
 
-            User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
+            ACCENT_POLICY accentPolicy = new ACCENT_POLICY
             {
-                AccentState = User32.ACCENT_STATE.ACCENT_DISABLED,
+                AccentState = ACCENT_STATE.ACCENT_DISABLED,
             };
 
             int accentStructSize = Marshal.SizeOf(accentPolicy);
@@ -111,23 +112,23 @@ namespace ModernWpf.Controls.Primitives
             IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
             Marshal.StructureToPtr(accentPolicy, accentPtr, false);
 
-            User32.WINCOMPATTRDATA data = new User32.WINCOMPATTRDATA
+            WINCOMPATTRDATA data = new WINCOMPATTRDATA
             {
-                Attribute = User32.WINCOMPATTR.WCA_ACCENT_POLICY,
+                Attribute = WINCOMPATTR.WCA_ACCENT_POLICY,
                 SizeOfData = accentStructSize,
                 Data = accentPtr
             };
 
-            User32.SetWindowCompositionAttribute(handle, ref data);
+            SetWindowCompositionAttribute(handle, ref data);
 
             Marshal.FreeHGlobal(accentPtr);
         }
 
         private static bool TryApplyAero(IntPtr handle)
         {
-            User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
+            ACCENT_POLICY accentPolicy = new ACCENT_POLICY
             {
-                AccentState = User32.ACCENT_STATE.ACCENT_ENABLE_BLURBEHIND,
+                AccentState = ACCENT_STATE.ACCENT_ENABLE_BLURBEHIND,
             };
 
             int accentStructSize = Marshal.SizeOf(accentPolicy);
@@ -135,14 +136,14 @@ namespace ModernWpf.Controls.Primitives
             IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
             Marshal.StructureToPtr(accentPolicy, accentPtr, false);
 
-            User32.WINCOMPATTRDATA data = new User32.WINCOMPATTRDATA
+            WINCOMPATTRDATA data = new WINCOMPATTRDATA
             {
-                Attribute = User32.WINCOMPATTR.WCA_ACCENT_POLICY,
+                Attribute = WINCOMPATTR.WCA_ACCENT_POLICY,
                 SizeOfData = accentStructSize,
                 Data = accentPtr
             };
 
-            User32.SetWindowCompositionAttribute(handle, ref data);
+            SetWindowCompositionAttribute(handle, ref data);
 
             Marshal.FreeHGlobal(accentPtr);
 
@@ -151,9 +152,9 @@ namespace ModernWpf.Controls.Primitives
 
         private static bool TryApplyAcrylic(IntPtr handle, Color backcolor)
         {
-            User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
+            ACCENT_POLICY accentPolicy = new ACCENT_POLICY
             {
-                AccentState = User32.ACCENT_STATE.ACCENT_ENABLE_ACRYLICBLURBEHIND,
+                AccentState = ACCENT_STATE.ACCENT_ENABLE_ACRYLICBLURBEHIND,
                 GradientColor = (uint)backcolor.ColorToDouble(0.8)
             };
 
@@ -162,14 +163,14 @@ namespace ModernWpf.Controls.Primitives
             IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
             Marshal.StructureToPtr(accentPolicy, accentPtr, false);
 
-            User32.WINCOMPATTRDATA data = new User32.WINCOMPATTRDATA
+            WINCOMPATTRDATA data = new WINCOMPATTRDATA
             {
-                Attribute = User32.WINCOMPATTR.WCA_ACCENT_POLICY,
+                Attribute = WINCOMPATTR.WCA_ACCENT_POLICY,
                 SizeOfData = accentStructSize,
                 Data = accentPtr
             };
 
-            User32.SetWindowCompositionAttribute(handle, ref data);
+            SetWindowCompositionAttribute(handle, ref data);
 
             Marshal.FreeHGlobal(accentPtr);
 
@@ -188,5 +189,82 @@ namespace ModernWpf.Controls.Primitives
             // Alpha
             (int)(value.A * scale) << 24;
         }
+
+        /// <summary>
+        /// DWM window accent state.
+        /// </summary>
+        private enum ACCENT_STATE
+        {
+            ACCENT_DISABLED = 0,
+            ACCENT_ENABLE_GRADIENT = 1,
+            ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+            ACCENT_ENABLE_BLURBEHIND = 3,
+            ACCENT_ENABLE_ACRYLICBLURBEHIND = 4,
+            ACCENT_INVALID_STATE = 5
+        }
+
+        /// <summary>
+        /// DWM window attributes.
+        /// </summary>
+        private enum WINCOMPATTR
+        {
+            WCA_UNDEFINED = 0,
+            WCA_NCRENDERING_ENABLED = 1,
+            WCA_NCRENDERING_POLICY = 2,
+            WCA_TRANSITIONS_FORCEDISABLED = 3,
+            WCA_ALLOW_NCPAINT = 4,
+            WCA_CAPTION_BUTTON_BOUNDS = 5,
+            WCA_NONCLIENT_RTL_LAYOUT = 6,
+            WCA_FORCE_ICONIC_REPRESENTATION = 7,
+            WCA_EXTENDED_FRAME_BOUNDS = 8,
+            WCA_HAS_ICONIC_BITMAP = 9,
+            WCA_THEME_ATTRIBUTES = 10,
+            WCA_NCRENDERING_EXILED = 11,
+            WCA_NCADORNMENTINFO = 12,
+            WCA_EXCLUDED_FROM_LIVEPREVIEW = 13,
+            WCA_VIDEO_OVERLAY_ACTIVE = 14,
+            WCA_FORCE_ACTIVEWINDOW_APPEARANCE = 15,
+            WCA_DISALLOW_PEEK = 16,
+            WCA_CLOAK = 17,
+            WCA_CLOAKED = 18,
+            WCA_ACCENT_POLICY = 19,
+            WCA_FREEZE_REPRESENTATION = 20,
+            WCA_EVER_UNCLOAKED = 21,
+            WCA_VISUAL_OWNER = 22,
+            WCA_HOLOGRAPHIC = 23,
+            WCA_EXCLUDED_FROM_DDA = 24,
+            WCA_PASSIVEUPDATEMODE = 25,
+            WCA_USEDARKMODECOLORS = 26,
+            WCA_CORNER_STYLE = 27,
+            WCA_PART_COLOR = 28,
+            WCA_DISABLE_MOVESIZE_FEEDBACK = 29,
+            WCA_LAST = 30
+        }
+
+        /// <summary>
+        /// DWM window accent policy.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        private struct ACCENT_POLICY
+        {
+            public ACCENT_STATE AccentState;
+            public uint AccentFlags;
+            public uint GradientColor;
+            public uint AnimationId;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct WINCOMPATTRDATA
+        {
+            public WINCOMPATTR Attribute;
+            public IntPtr Data;
+            public int SizeOfData;
+        }
+
+        /// <summary>
+        /// Sets various information regarding DWM window attributes.
+        /// </summary>
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int SetWindowCompositionAttribute(IntPtr hWnd, ref WINCOMPATTRDATA data);
     }
 }
