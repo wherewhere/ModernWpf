@@ -173,7 +173,7 @@ namespace ModernWpf.Controls.Primitives
         #endregion
 
         #region UseMicaBackdrop
-        public class ParameterTypes
+        public static class Methods
         {
             [Flags]
             public enum DWMWINDOWATTRIBUTE
@@ -181,38 +181,17 @@ namespace ModernWpf.Controls.Primitives
                 DWMWA_USE_IMMERSIVE_DARK_MODE = 20,
                 DWMWA_SYSTEMBACKDROP_TYPE = 38
             }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct MARGINS
-            {
-                public int cxLeftWidth;      // width of left border that retains its size
-                public int cxRightWidth;     // width of right border that retains its size
-                public int cyTopHeight;      // height of top border that retains its size
-                public int cyBottomHeight;   // height of bottom border that retains its size
-            }
-        }
-
-        public static class Methods
-        {
-            [DllImport("DwmApi.dll")]
-            static extern int DwmExtendFrameIntoClientArea(
-                IntPtr hwnd,
-                ref ParameterTypes.MARGINS pMarInset);
-
             [DllImport("dwmapi.dll")]
-            static extern int DwmSetWindowAttribute(IntPtr hwnd, ParameterTypes.DWMWINDOWATTRIBUTE dwAttribute, ref int pvAttribute, int cbAttribute);
+            static extern int DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, ref int pvAttribute, int cbAttribute);
 
-            public static int ExtendFrame(IntPtr hwnd, ParameterTypes.MARGINS margins)
-                => DwmExtendFrameIntoClientArea(hwnd, ref margins);
-
-            public static int SetWindowAttribute(IntPtr hwnd, ParameterTypes.DWMWINDOWATTRIBUTE attribute, int parameter)
+            public static int SetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, int parameter)
                 => DwmSetWindowAttribute(hwnd, attribute, ref parameter, Marshal.SizeOf<int>());
         }
         public static void SetUseMicaBackdrop(Window window)
         {
             Methods.SetWindowAttribute(
                 new WindowInteropHelper(window).Handle,
-                ParameterTypes.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
+                Methods.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
                 2);
             RefreshDarkMode(window);
             ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => RefreshDarkMode(window);
@@ -223,7 +202,7 @@ namespace ModernWpf.Controls.Primitives
             int flag = isDark ? 1 : 0;
             Methods.SetWindowAttribute(
                 new WindowInteropHelper(window).Handle,
-                ParameterTypes.DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE,
+                Methods.DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE,
                 flag);
         }
         #endregion
