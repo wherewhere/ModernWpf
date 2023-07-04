@@ -175,16 +175,6 @@ namespace ModernWpf.Controls.Primitives
         #region UseMicaBackdrop
         public class ParameterTypes
         {
-            /*
-            [Flags]
-            enum DWM_SYSTEMBACKDROP_TYPE
-            {
-                DWMSBT_MAINWINDOW = 2, // Mica
-                DWMSBT_TRANSIENTWINDOW = 3, // Acrylic
-                DWMSBT_TABBEDWINDOW = 4 // Tabbed
-            }
-            */
-
             [Flags]
             public enum DWMWINDOWATTRIBUTE
             {
@@ -199,7 +189,7 @@ namespace ModernWpf.Controls.Primitives
                 public int cxRightWidth;     // width of right border that retains its size
                 public int cyTopHeight;      // height of top border that retains its size
                 public int cyBottomHeight;   // height of bottom border that retains its size
-            };
+            }
         }
 
         public static class Methods
