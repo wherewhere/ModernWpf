@@ -292,102 +292,134 @@ namespace ModernWpf.Controls.Primitives
             bool isSetAcrylic = false;
             bool isSetAero = false;
 
-            void ApplyDarkMode()
-            {
-                var theme = ThemeManager.GetActualTheme(window);
-
-                bool IsDark(ElementTheme theme)
-                {
-                    return theme == ElementTheme.Default
-                        ? ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark
-                        : theme == ElementTheme.Dark;
-                }
-
-                if (IsDark(theme))
-                {
-                    window.ApplyDarkMode();
-                }
-                else
-                {
-                    window.RemoveDarkMode();
-                }
-            }
-
-            var handler = new RoutedEventHandler((sender, e) => ApplyDarkMode());
-
             if (isModern)
             {
-                ApplyDarkMode();
-
-                if (window.IsLoaded)
-                {
-                    window.RemoveTitleBar();
-                }
-                else
-                {
-                    void RemoveTitleBar(object sender, RoutedEventArgs e)
-                    {
-                        window.RemoveTitleBar();
-                    }
-
-                    window.Loaded -= RemoveTitleBar;
-                    window.Loaded += RemoveTitleBar;
-                }
-
-                ThemeManager.RemoveActualThemeChangedHandler(window, handler);
-                ThemeManager.AddActualThemeChangedHandler(window, handler);
+                ApplyDarkMode(window);
+                HandleTitleBar(window);
 
                 if (isUseMica)
                 {
-                    var type = GetSystemBackdropType(window);
-                    if (MicaHelper.IsSupported(type))
-                    {
-                        isSetMica = true;
-                        window.SetResourceReference(FrameworkElement.StyleProperty, MicaWindowStyleKey);
-                    }
+                    isSetMica = SetMicaStyle(window);
                 }
 
                 if (!isSetMica && isUseAcrylic)
                 {
-                    if (AcrylicHelper.IsAcrylicSupported())
-                    {
-                        isSetAcrylic = true;
-                        window.SetResourceReference(FrameworkElement.StyleProperty, AcrylicWindowStyleKey);
-                    }
-                    else if (AcrylicHelper.IsSupported())
-                    {
-                        isSetAcrylic = true;
-                        window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);
-                    }
+                    isSetAcrylic = SetAcrylicStyle(window);
                 }
 
                 if (!isSetMica && !isSetAcrylic && isUseAero)
                 {
-                    if (new Version(6, 0) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(6, 2, 8824))
-                    {
-                        isSetAero = true;
-                        window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);
-                    }
+                    isSetAero = SetAeroStyle(window);
                 }
 
                 if (!isSetMica && !isSetAcrylic && !isSetAero)
                 {
-                    if (OSVersionHelper.IsWindows11OrGreater)
-                    {
-                        window.SetResourceReference(FrameworkElement.StyleProperty, SnapWindowStyleKey);
-                    }
-                    else
-                    {
-                        window.SetResourceReference(FrameworkElement.StyleProperty, DefaultWindowStyleKey);
-                    }
+                    SetDefaultStyle(window);
                 }
             }
             else
             {
-                window.ClearValue(FrameworkElement.StyleProperty);
-                window.RemoveDarkMode();
-                ThemeManager.RemoveActualThemeChangedHandler(window, handler);
+                ClearWindowStyle(window);
+                RemoveDarkMode(window);
             }
+        }
+
+        private static void ApplyDarkMode(Window window)
+        {
+            var theme = ThemeManager.GetActualTheme(window);
+
+            bool IsDark(ElementTheme theme)
+            {
+                return theme == ElementTheme.Default
+                    ? ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark
+                    : theme == ElementTheme.Dark;
+            }
+
+            if (IsDark(theme))
+            {
+                window.ApplyDarkMode();
+            }
+            else
+            {
+                window.RemoveDarkMode();
+            }
+        }
+
+        private static void HandleTitleBar(Window window)
+        {
+            if (window.IsLoaded)
+            {
+                window.RemoveTitleBar();
+            }
+            else
+            {
+                window.Loaded -= RemoveTitleBar;
+                window.Loaded += RemoveTitleBar;
+            }
+        }
+
+        private static void RemoveTitleBar(object sender, RoutedEventArgs e)
+        {
+            var window = (Window)sender;
+            window.RemoveTitleBar();
+        }
+
+        private static bool SetMicaStyle(Window window)
+        {
+            var type = GetSystemBackdropType(window);
+            if (MicaHelper.IsSupported(type))
+            {
+                window.SetResourceReference(FrameworkElement.StyleProperty, MicaWindowStyleKey);
+                return true;
+            }
+            return false;
+        }
+
+        private static bool SetAcrylicStyle(Window window)
+        {
+            if (AcrylicHelper.IsAcrylicSupported())
+            {
+                window.SetResourceReference(FrameworkElement.StyleProperty, AcrylicWindowStyleKey);
+                return true;
+            }
+            else if (AcrylicHelper.IsSupported())
+            {
+                window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);
+                return true;
+            }
+            return false;
+        }
+
+        private static bool SetAeroStyle(Window window)
+        {
+            if (new Version(6, 0) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(6, 2, 8824))
+            {
+                window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);
+                return true;
+            }
+            return false;
+        }
+
+        private static void SetDefaultStyle(Window window)
+        {
+            if (OSVersionHelper.IsWindows11OrGreater)
+            {
+                window.SetResourceReference(FrameworkElement.StyleProperty, SnapWindowStyleKey);
+            }
+            else
+            {
+                window.SetResourceReference(FrameworkElement.StyleProperty, DefaultWindowStyleKey);
+            }
+        }
+
+        private static void ClearWindowStyle(Window window)
+        {
+            window.ClearValue(FrameworkElement.StyleProperty);
+        }
+
+        private static void RemoveDarkMode(Window window)
+        {
+            window.RemoveDarkMode();
         }
     }
 }
