@@ -57,7 +57,8 @@
                             FontStretch="{TemplateBinding FontStretch}"
                             FontWeight="{TemplateBinding FontWeight}"
                             Foreground="{TemplateBinding Foreground}"
-                            Style="{TemplateBinding TextBoxStyle}" />
+                            Style="{TemplateBinding TextBoxStyle}" 
+                            CaretBrush="{DynamicResource TextControlForegroundFocused}" />
 
                         <Popup
                             x:Name="SuggestionsPopup"
