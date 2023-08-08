@@ -13,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Windows.UI.Xaml.Controls.Primitives;
 using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
